@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yigou.advert.mapper.AdTypeMapper">
+
+    <select id="getTotalCount" resultType="int">
+        select count(id) from tb_ad_type where del=0 and name like concat('%',#{name},'%');
+    </select>
+
+    <select id="getAdTypeList" resultType="AdType">
+        select * from tb_ad_type where del=0 and name like concat('%',#{name},'%') limit #{pageIndex},#{pageSize}
+    </select>
+
+    <insert id="addAdType">
+        insert into tb_ad_type values (null,#{name},0);
+    </insert>
+
+    <update id="updateAdType">
+        update tb_ad_type set name=#{name} where id=#{id} and del=0;
+    </update>
+
+    <update id="deleteAdTypeById">
+        update tb_ad_type set del=1 where id=#{id};
+    </update>
+
+    <select id="getAdTypeById" resultType="AdType">
+        select * from tb_ad_type where id=#{id} and del=0;
+    </select>
+
+    <select id="getAdTypes" resultType="AdType">
+        select * from tb_ad_type where del=0
+    </select>
+
+
+</mapper>

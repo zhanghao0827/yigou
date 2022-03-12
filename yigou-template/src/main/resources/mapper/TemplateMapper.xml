@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yigou.template.mapper.TemplateMapper">
+
+    <select id="getTotalCount" resultType="int">
+        select count(id) from tb_template where del=0 and name like concat('%',#{name},'%');
+    </select>
+
+    <select id="getTemplateList" resultType="Template">
+        select * from tb_template where del=0 and name like concat('%',#{name},'%') limit #{pageIndex},#{pageSize};
+    </select>
+
+    <insert id="addTemplate">
+        insert into tb_template values (null,#{specId},#{brandId},#{name},#{attribute},0);
+    </insert>
+
+    <select id="getTemplateById" resultType="Template">
+        select * from tb_template where id=#{id} and del=0;
+    </select>
+
+    <update id="updateTemplate">
+        update tb_template set spec_id=#{specId},brand_id=#{brandId},name=#{name},attribute=#{attribute} where id=#{id};
+    </update>
+
+    <select id="getTemplates" resultType="Template">
+        select * from tb_template where del=0;
+    </select>
+
+
+</mapper>

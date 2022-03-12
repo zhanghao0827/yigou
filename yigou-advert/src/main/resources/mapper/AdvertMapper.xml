@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yigou.advert.mapper.AdvertMapper">
+
+    <select id="getTotalCount" resultType="int">
+        select count(id) from tb_advert where del=0
+    </select>
+
+    <resultMap id="getAdvertList" type="Advert">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="url" property="url"/>
+        <result column="pic" property="pic"/>
+        <result column="status" property="status"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="del" property="del"/>
+        <!--多对一-->
+        <association property="adType" javaType="com.yigou.common.entity.AdType">
+            <id column="type_id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getAdvertList" resultMap="getAdvertList">
+        select C.*,T.`name` from tb_advert C INNER JOIN tb_ad_type T ON C.type_id=T.id and C.del=0
+        order by C.id desc limit #{pageIndex},#{pageSize};
+    </select>
+
+    <select id="getAdvertByTypeId" resultType="Advert">
+        select * from tb_advert where del=0 and status=1 and type_id=#{id} order by sort_order asc
+    </select>
+
+    <update id="updateAdvertStatus">
+        update tb_advert set status=#{status} where id=#{id}
+    </update>
+
+    <insert id="addAdvert" parameterType="Advert">
+        insert into tb_advert values (null,${typeId},#{title},#{url},#{pic},1,#{sortOrder},0);
+    </insert>
+
+    <select id="getAdvertById" resultType="Advert">
+        select * from tb_advert where del=0 and status=1 and id=#{id}
+    </select>
+
+    <update id="updateAdvert">
+        update tb_advert set type_id=#{typeId},title=#{title},url=#{url},pic=#{pic},sort_order=#{sortOrder} where id=#{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yigou.spec.mapper.SpecOptMapper">
+
+    <insert id="addSpecOpt">
+        insert into tb_spec_opt values (null,#{specId},#{optName},#{order},0);
+    </insert>
+
+    <select id="getSpecOptBySpecId" resultType="SpecOpt">
+        select * from tb_spec_opt where spec_id=#{specId} and del=0;
+    </select>
+
+    <delete id="deleteSpecOptBySpecId">
+        delete from tb_spec_opt where spec_id=#{specId}
+    </delete>
+
+</mapper>

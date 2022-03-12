@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.yigou</groupId>
+    <artifactId>yigou</artifactId>
+    <version>1.0.0</version>
+
+    <name>yigou</name>
+    <description>易购商城</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>yigou-brand</module>
+        <module>yigou-common</module>
+        <module>yigou-eureka</module>
+        <module>yigou-user</module>
+        <module>yigou-admin</module>
+        <module>yigou-admin-web</module>
+        <module>yigou-advert</module>
+        <module>yigou-portal</module>
+        <module>yigou-spec</module>
+        <module>yigou-template</module>
+        <module>yigou-catemenu</module>
+        <module>yigou-elasticsearch</module>
+        <module>yigou-goods</module>
+        <module>yigou-static</module>
+        <module>yigou-address</module>
+        <module>yigou-order</module>
+        <module>yigou-pay</module>
+    </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <yigou.version>1.0.0</yigou.version>
+        <lcn.last.version>4.1.0</lcn.last.version>
+    </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.4.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--通用工具-->
+            <dependency>
+                <groupId>com.yigou</groupId>
+                <artifactId>yigou-common</artifactId>
+                <version>${yigou.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

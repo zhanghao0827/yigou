@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yigou.brand.mapper.BrandMapper">
+
+    <resultMap id="BrandResultMap" type="com.yigou.common.entity.Brand">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="image" property="image"/>
+        <result column="first_char" property="firstChar"/>
+        <result column="del" property="del"/>
+    </resultMap>
+
+    <sql id="BrandAllColumn">
+        id,name,image,first_char,del
+    </sql>
+
+    <select id="getBrands" resultMap="BrandResultMap">
+        select
+        <include refid="BrandAllColumn"/>
+        from tb_brand where del=0;
+    </select>
+
+    <insert id="addBrand">
+        insert into tb_brand values (null,#{name},#{image},#{firstChar},0);
+    </insert>
+
+    <update id="updateBrand">
+        update tb_brand set name=#{name},image=#{image},first_char=#{firstChar} where id=#{id};
+    </update>
+
+    <select id="getBrandById" resultType="Brand">
+        select
+        <include refid="BrandAllColumn"/>
+        from tb_brand where id=#{id} and del=0;
+    </select>
+
+    <delete id="deleteBrandById">
+        update tb_brand set del=1 where id=#{id};
+    </delete>
+
+    <update id="deleteBatch">
+        update tb_brand set del=1 where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+    <!--delete from user where id in (?,?,?,?) -->
+
+    <select id="getTotalCount" resultType="int">
+        select count(id) from tb_brand where del=0
+    </select>
+
+    <select id="getBrandListByPage" resultType="Brand">
+        select <include refid="BrandAllColumn"/> from tb_brand where del=0 limit #{pageIndex},#{pageSize}
+    </select>
+</mapper>

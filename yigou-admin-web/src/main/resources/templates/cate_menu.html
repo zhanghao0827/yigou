@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商品分类管理</title>
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+    <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
+
+</head>
+
+<body class="hold-transition skin-red sidebar-mini">
+<!-- .box-body -->
+
+<script>
+    function initOptions() {
+        $("#select_template_add").empty();
+        $.getJSON('/template/all', function (res) {
+            // alert(JSON.stringify(res));
+            for (let i = 0; i < res.length; i++) {
+                $("#select_template_add").append("<option value='" + res[i].id + "'>" + res[i].name + "</option>");
+            }
+        });
+        let lis = $("#breadCrumb li");
+        let result = "";
+        for (let i = 0; i < lis.length; i++) {
+            let t = $(lis[i]).text();
+            result += t + " / ";
+        }
+        $('#breadCrumb_add').text(result.substring(0, result.length - 3));
+    }
+
+    function initOptions_update() {
+        $("#select_template_update").empty();
+        $.getJSON('/template/all', function (res) {
+            // alert(JSON.stringify(res));
+            for (let i = 0; i < res.length; i++) {
+                $("#select_template_update").append("<option value='" + res[i].id + "'>" + res[i].name + "</option>");
+            }
+        });
+        let lis = $("#breadCrumb li");
+        let result = "";
+        for (let i = 0; i < lis.length; i++) {
+            let t = $(lis[i]).text();
+            result += t + " / ";
+        }
+        $('#breadCrumb_update').text(result.substring(0, result.length - 3));
+    }
+</script>
+
+<div class="box-header with-border">
+    <h3 class="box-title">商品分类管理
+    </h3>
+</div>
+
+<div class="box-body">
+    <ol class="breadcrumb" th:utext="${breadCrumb}" id="breadCrumb">
+
+    </ol>
+
+    <!-- 数据表格 -->
+    <div class="table-box">
+
+        <!--工具栏-->
+        <div class="pull-left">
+            <div class="form-group form-inline">
+                <div class="btn-group">
+                    <button onclick="initOptions();" type="button" class="btn btn-default" title="新建"
+                            data-toggle="modal"
+                            data-target="#addModal"><i class="fa fa-file-o"></i> 新建
+                    </button>
+                    <button type="button" class="btn btn-default" title="删除"><i class="fa fa-trash-o"></i> 删除</button>
+                    <button type="button" class="btn btn-default" title="刷新"><i class="fa fa-check"></i> 刷新</button>
+
+                </div>
+            </div>
+        </div>
+
+        <form id="searchForm" action="/cate_menu/?pageIndex=1&pageSize=5" method="get">
+            <input type="hidden" id="parentId" name="parentId" th:value="${parentId}"/>
+        </form>
+
+
+        <!--数据列表-->
+        <table id="dataList" class="table table-bordered table-striped table-hover dataTable">
+            <thead>
+            <tr>
+                <th class="" style="padding-right:0px">
+                    <input type="checkbox" class="icheckbox_square-blue">
+                </th>
+                <th class="sorting_asc">分类ID</th>
+                <th class="sorting">分类名称</th>
+                <th class="sorting">类型模板名称</th>
+                <th class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cateMenu:${pageUtils.records}">
+                <td><input type="checkbox"></td>
+                <td th:text="${cateMenu.id}"></td>
+                <td th:text="${cateMenu.name}"></td>
+                <td th:text="${cateMenu.template.name}"></td>
+                <td class="text-center">
+                    <button th:if="${flag==false}" th:onclick="|queryChild(${cateMenu.id});|" type="button"
+                            class="btn bg-olive btn-xs">查询下级
+                    </button>
+                    <button th:onclick="|goUpdate(${cateMenu.id});|" type="button" class="btn bg-olive btn-xs"
+                            data-toggle="modal" data-target="#editModal">更新
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <!--数据列表/-->
+
+        <!-- 分页组件 -->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="dataTables_paginate paging_bootstrap" id="sample-table_paginate">
+                    <ul class="pagination">
+                        <li class="prev"><a
+                                th:href="|/cate_menu/?pageIndex=1&pageSize=${pageUtils.pageSize}&parentId=${parentId}|">首页</a>
+                        </li>
+                        <!--<li class="prev" th:if="${pageUtils.pageIndex>1}"><a th:href="|/brand/page?pageIndex=${pageUtils.pageIndex-1}&pageSize=${pageUtils.pageSize}|">上一页</a></li>-->
+                        <li class="next" th:each="num:${pageUtils.numbers}"
+                            th:class="${pageUtils.pageIndex==num}? active">
+                            <a th:href="|/cate_menu/?pageIndex=${num}&pageSize=${pageUtils.pageSize}&parentId=${parentId}|"
+                               th:text="${num}"></a>
+                        </li>
+                        <!--	<li class="next" th:if="${pageUtils.pageIndex<pageUtils.pageCount}"><a th:href="|/brand/page?pageIndex=${pageUtils.pageIndex+1}&pageSize=${pageUtils.pageSize}|">下一页</a></li>-->
+                        <li class="next"><a
+                                th:href="|/cate_menu/?pageIndex=${pageUtils.pageCount}&pageSize=${pageUtils.pageSize}&parentId=${parentId}|">尾页</a>
+                        </li>
+                        <li class="next"><a href="#" th:text="|当前${pageUtils.pageIndex}/${pageUtils.pageCount}页|"></a>
+                        </li>
+                        <li class="next"><a href="#" th:text="|共${pageUtils.totalCount}条|">XXX</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 分页组件 -->
+
+    </div>
+    <!-- 数据表格 /-->
+
+
+</div>
+<!-- /.box-body -->
+
+<!--新增窗口-->
+<form id="addForm" action="#" method="post">
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel2">商品分类新增</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-striped" width="800px">
+                        <!--隐藏parentId-->
+                        <input type="hidden" name="parentId" th:value="${parentId}">
+                        <tr>
+                            <td>上级商品分类</td>
+                            <td id="breadCrumb_add">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>商品分类名称</td>
+                            <td><input name="name" class="form-control" placeholder="商品分类名称"></td>
+                        </tr>
+                        <tr>
+                            <td>类型模板</td>
+                            <td>
+                                <select name="templateId" id="select_template_add" class="form-control">
+
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button onclick="addCateMenu();" class="btn btn-success" data-dismiss="modal" aria-hidden="true">新增
+                    </button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- 编辑窗口 -->
+<form id="updateForm" action="#">
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">商品分类编辑</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered table-striped" width="800px">
+                        <input type="hidden" name="id" id="update_id">
+                        <input type="hidden" name="parentId" id="update_parentId">
+                        <tr>
+                            <td>上级商品分类</td>
+                            <td id="breadCrumb_update">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>商品分类名称</td>
+                            <td><input name="name" id="update_name" class="form-control" placeholder="商品分类名称"></td>
+                        </tr>
+                        <tr>
+                            <td>类型模板</td>
+                            <td>
+                                <select name="templateId" id="select_template_update" class="form-control">
+
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button onclick="doUpdate();" class="btn btn-success" data-dismiss="modal" aria-hidden="true">更新
+                    </button>
+                    <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        initOptions_update();
+    });
+
+    function queryChild(parentId) {
+        $('#parentId').val(parentId);
+        $("#searchForm").submit();
+    }
+
+    function addCateMenu() {
+        $.post("/cate_menu/", $('#addForm').serialize(), function (res) {
+            alert(res.msg);
+            location.href = '/cate_menu/';
+        });
+    }
+
+    function goUpdate(id) {
+        $.getJSON('/cate_menu/' + id, function (res) {
+            console.log(res.templateId);
+            $("#update_id").val(res.id);
+            $("#update_parentId").val(res.parentId);
+            $("#select_template_update").val(res.templateId);
+            $("#update_name").val(res.name);
+        });
+    }
+
+    function doUpdate() {
+        $.ajax({
+            url: '/cate_menu/',
+            type: "PUT",
+            data: $('#updateForm').serialize(),
+            success: function (result) {
+                alert(result.msg);
+                location.href = "/cate_menu/";
+            }
+        });
+    }
+</script>
+</body>
+</html>

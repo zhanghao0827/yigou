@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yigou.spec.mapper.SpecMapper">
+
+    <select id="getTotalCount" resultType="int">
+        select count(id) from tb_spec where del=0 and spec_name like concat('%',#{specName},'%');
+    </select>
+
+    <select id="getSpecList" resultType="Spec">
+        select * from tb_spec where del=0 and spec_name like concat('%',#{specName},'%') limit #{pageIndex},#{pageSize}
+    </select>
+
+    <insert id="addSpec" useGeneratedKeys="true" keyProperty="id">
+        insert into tb_spec values (null,#{specName},0);
+    </insert>
+
+    <select id="getSpecById" resultType="Spec">
+        select * from tb_spec where id=#{id} and del=0;
+    </select>
+
+    <update id="updateSpec">
+        update tb_spec set spec_name=#{specName} where id=#{id};
+    </update>
+
+    <select id="getSpecs" resultType="Spec">
+        select * from tb_spec where del=0
+    </select>
+
+</mapper>

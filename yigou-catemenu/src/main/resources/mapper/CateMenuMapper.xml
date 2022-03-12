@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yigou.catemenu.mapper.CateMenuMapper">
+
+    <select id="getTotalCount" resultType="int">
+        select count(1) from tb_cate_menu where del=0 and parent_id=#{parentId};
+    </select>
+
+    <resultMap id="getCateMenuList" type="CateMenu">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="template_id" property="templateId"/>
+        <result column="name" property="name"/>
+        <result column="del" property="del"/>
+        <association property="template" javaType="com.yigou.common.entity.Template">
+            <result column="template_name" property="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getCateMenuList" resultMap="getCateMenuList">
+        select cm.*,tmp.name as 'template_name' from tb_cate_menu cm
+        inner join tb_template tmp on cm.template_id=tmp.id and cm.del=0 and cm.parent_id=#{parentId} order by cm.id limit #{pageIndex},#{pageSize};
+    </select>
+
+    <select id="getCateMenuById" resultType="CateMenu">
+        select * from tb_cate_menu where del=0 and id=#{id}
+    </select>
+
+    <select id="getCateMenus" resultType="CateMenu">
+        select * from tb_cate_menu where del=0;
+    </select>
+
+    <insert id="addCateMenu">
+        insert into tb_cate_menu values (null,#{parentId},#{templateId},#{name},0);
+    </insert>
+
+    <update id="updateCateMenu">
+        update tb_cate_menu set parent_id=#{parentId},template_id=#{templateId},name=#{name} where id=#{id};
+    </update>
+
+</mapper>
